@@ -1,12 +1,15 @@
 import React from 'react'
 import { generateElement, renderElementAsync } from '../transpile'
+import transfrom, { _poly } from '../../../packages/react-live-buble/src/index'
 import { shallow } from 'enzyme'
+
+const transpile = code => ({ code: transfrom(code), scope: {_poly} })
 
 describe('transpile', () => {
   describe('generateElement', () => {
     it('should transpile JSX', () => {
       const code = '<div>Hello World!</div>'
-      const Component = generateElement({ code })
+      const Component = generateElement(transpile(code))
       const wrapper = shallow(<Component/>)
 
       expect(wrapper.html()).toBe(code)
@@ -14,7 +17,7 @@ describe('transpile', () => {
 
     it('should transpile PFCs', () => {
       const code = '() => <div>Hello World!</div>'
-      const Component = generateElement({ code })
+      const Component = generateElement(transpile(code))
       const wrapper = shallow(<Component />)
 
       expect(wrapper.html()).toBe('<div>Hello World!</div>')
@@ -22,7 +25,7 @@ describe('transpile', () => {
 
     it('should transpile components', () => {
       const code = 'class Test extends React.Component { render() { return <div>Hello World!</div> }}'
-      const Component = generateElement({ code })
+      const Component = generateElement(transpile(code))
       const wrapper = shallow(<Component />)
 
       expect(wrapper.html()).toBe('<div>Hello World!</div>')
@@ -30,7 +33,7 @@ describe('transpile', () => {
 
     it('should handle trailing semicolons', () => {
       const code = '<div>Hello World!</div>;\n'
-      const Component = generateElement({ code })
+      const Component = generateElement(transpile(code))
       const wrapper = shallow(<Component/>)
 
       expect(wrapper.html()).toBe('<div>Hello World!</div>')
@@ -38,7 +41,7 @@ describe('transpile', () => {
 
     it('should emit errors on error callback', () => {
       expect(() => {
-        generateElement({ code: '<div>' })
+        generateElement(transpile('<div>'))
       }).toThrow()
     })
 
@@ -46,13 +49,13 @@ describe('transpile', () => {
       const code = '() => { const props = { b: "b" }; return <div a="a" {...props} /> }'
 
       expect(() => {
-        generateElement({ code })
+        generateElement(transpile(code))
       }).not.toThrow()
     })
 
     it('should ignore comments', () => {
       const code = '// Comment\n<div>Hello World!</div>'
-      const Component = generateElement({ code })
+      const Component = generateElement(transpile(code))
       const wrapper = shallow(<Component/>)
 
       expect(wrapper.text()).toBe('Hello World!')
@@ -74,7 +77,7 @@ describe('transpile', () => {
       const resultCb = jest.fn()
       const code = 'render(<div>Hello World!</div>)'
 
-      renderElementAsync({ code }, resultCb)
+      renderElementAsync(transpile(code), resultCb)
 
       expect(resultCb).toHaveBeenCalled()
 

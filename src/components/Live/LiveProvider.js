@@ -36,7 +36,7 @@ class LiveProvider extends Component {
     scope: PropTypes.object,
     mountStylesheet: PropTypes.bool,
     noInline: PropTypes.bool,
-    transformCode: PropTypes.func
+    transformCode: PropTypes.func.isRequired
   }
 
   onChange = code => {
@@ -49,12 +49,12 @@ class LiveProvider extends Component {
   }
 
   transpile = ({ code, scope, transformCode, noInline = false }) => {
+    const errorCallback = err => this.setState({ element: undefined, error: err.toString() })
     // Transpilation arguments
     const input = {
-      code: transformCode ? transformCode(code) : code,
+      code: transformCode(code, errorCallback),
       scope
     }
-    const errorCallback = err => this.setState({ element: undefined, error: err.toString() })
     const renderElement = element => this.setState({ ...state, element })
 
     // State reset object

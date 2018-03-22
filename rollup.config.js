@@ -15,8 +15,8 @@ const plugins = [
   commonjs({
     include: 'node_modules/**',
     namedExports: {
-      'buble/dist/buble.deps': ['transform'],
-      'buble': ['transform'],
+      // 'buble/dist/buble.deps': ['transform'],
+      // 'buble': ['transform'],
       'prismjs/components/prism-core': ['highlight', 'languages']
     }
   }),
@@ -59,7 +59,7 @@ const output = {
   globals: {
     prismjs: 'Prism',
     react: 'React',
-    buble: 'Buble',
+    // buble: 'Buble',
     'react-dom': 'ReactDOM',
   }
 };
