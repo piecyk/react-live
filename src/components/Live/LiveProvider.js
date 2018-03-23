@@ -49,18 +49,19 @@ class LiveProvider extends Component {
   }
 
   transpile = ({ code, scope, transformCode, noInline = false }) => {
+
     const errorCallback = err => this.setState({ element: undefined, error: err.toString() })
-    // Transpilation arguments
-    const input = {
-      code: transformCode(code, errorCallback),
-      scope
-    }
     const renderElement = element => this.setState({ ...state, element })
 
     // State reset object
     const state = { unsafeWrapperError: undefined, error: undefined }
 
     try {
+      // Transpilation arguments
+      const input = {
+        code: transformCode(code),
+        scope
+      }
       if (noInline) {
         this.setState({ ...state, element: null }) // Reset output for async (no inline) evaluation
         renderElementAsync(input, renderElement, errorCallback)
